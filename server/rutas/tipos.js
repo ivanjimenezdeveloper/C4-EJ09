@@ -1,6 +1,6 @@
 const { check, validationResult, checkSchema } = require("express-validator");
 const express = require("express");
-const { listarTipos } = require("../../db/controllers/tipo");
+const { listarTipos, mostrarTipo } = require("../../db/controllers/tipo");
 
 const router = express.Router();
 
@@ -9,8 +9,14 @@ router.get("/listado", async (req, res, next) => {
   res.json(tipos);
 });
 
-router.get("/tipos/tipo/:id", (req, res, next) => {});
-router.post("/tipos/nuevo-tipo", (req, res, next) => {});
-router.put("/tipos/tipo/:id", (req, res, next) => {});
-router.delete("/tipos/tipo/:id", (req, res, next) => {});
+router.get("/tipo/:id", async (req, res, next) => {
+  const idTipo = req.params.id;
+
+  const tipo = await mostrarTipo(idTipo);
+
+  return tipo;
+});
+router.post("/nuevo-tipo", (req, res, next) => {});
+router.put("/tipo/:id", (req, res, next) => {});
+router.delete("/tipo/:id", (req, res, next) => {});
 module.exports = router;
