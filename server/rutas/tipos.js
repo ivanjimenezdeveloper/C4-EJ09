@@ -1,4 +1,9 @@
-const { check, validationResult, checkSchema } = require("express-validator");
+const {
+  check,
+  validationResult,
+  checkSchema,
+  body,
+} = require("express-validator");
 const express = require("express");
 const {
   listarTipos,
@@ -15,34 +20,91 @@ router.get("/listado", async (req, res, next) => {
   res.json(tipos);
 });
 
-router.get("/tipo/:id", async (req, res, next) => {
-  const idTipo = req.params.id;
+router.get(
+  "/tipo/:id",
+  check("id", "Id incorrecta").isMongoId(),
+  (req, res, next) => {
+    const errores = validationResult(req);
+    if (!errores.isEmpty()) {
+      console.log(errores.array());
+      const nuevoError = new Error(errores.array().map((error) => error.msg));
+      nuevoError.codigo = 400;
+      return next(nuevoError);
+    }
+    next();
+  },
+  async (req, res, next) => {
+    const idTipo = req.params.id;
 
-  const tipo = await mostrarTipo(idTipo);
+    const tipo = await mostrarTipo(idTipo);
 
-  res.json(tipo);
-});
+    res.json(tipo);
+  }
+);
 
-router.post("/nuevo-tipo", async (req, res, next) => {
-  const tipoACrear = req.body;
-  const tipo = await crearTipo(tipoACrear);
+router.post(
+  "/nuevo-tipo",
+  body("tipo", "no es correcto maestro").isAlpha(),
+  (req, res, next) => {
+    const errores = validationResult(req);
+    if (!errores.isEmpty()) {
+      console.log(errores.array());
+      const nuevoError = new Error(errores.array().map((error) => error.msg));
+      nuevoError.codigo = 400;
+      return next(nuevoError);
+    }
+    next();
+  },
+  async (req, res, next) => {
+    const tipoACrear = req.body;
+    const tipo = await crearTipo(tipoACrear);
 
-  res.json(tipo);
-});
+    res.json(tipo);
+  }
+);
 
-router.put("/tipo/:id", async (req, res, next) => {
-  const tipoAModificar = req.body;
-  const idTipo = req.params.id;
+router.put(
+  "/tipo/:id",
+  check("id", "Id incorrecta").isMongoId(),
+  body("tipo", "no es correcto maestro").isAlpha(),
+  (req, res, next) => {
+    const errores = validationResult(req);
+    if (!errores.isEmpty()) {
+      console.log(errores.array());
+      const nuevoError = new Error(errores.array().map((error) => error.msg));
+      nuevoError.codigo = 400;
+      return next(nuevoError);
+    }
+    next();
+  },
+  async (req, res, next) => {
+    const tipoAModificar = req.body;
+    const idTipo = req.params.id;
 
-  const tipo = await editarTipo(idTipo, tipoAModificar);
+    const tipo = await editarTipo(idTipo, tipoAModificar);
 
-  res.json(tipo);
-});
-router.delete("/tipo/:id", async (req, res, next) => {
-  const idTipo = req.params.id;
+    res.json(tipo);
+  }
+);
+router.delete(
+  "/tipo/:id",
+  check("id", "Id incorrecta").isMongoId(),
+  (req, res, next) => {
+    const errores = validationResult(req);
+    if (!errores.isEmpty()) {
+      console.log(errores.array());
+      const nuevoError = new Error(errores.array().map((error) => error.msg));
+      nuevoError.codigo = 400;
+      return next(nuevoError);
+    }
+    next();
+  },
+  async (req, res, next) => {
+    const idTipo = req.params.id;
 
-  const tipo = await eliminarTipo(idTipo);
+    const tipo = await eliminarTipo(idTipo);
 
-  res.json(tipo);
-});
+    res.json(tipo);
+  }
+);
 module.exports = router;
