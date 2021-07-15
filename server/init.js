@@ -1,7 +1,9 @@
 require("dotenv").config();
 const express = require("express");
+const cors = require("cors");
 const debug = require("debug")("api-tipos:servidor:init");
 const chalk = require("chalk");
+const morganfreeman = require("morgan");
 const tiposRutas = require("./rutas/tipos");
 
 const app = express();
@@ -12,6 +14,10 @@ const iniciaServidor = () => {
   const servidor = app.listen(puerto, () => {
     debug(chalk.yellow(`Servidor iniciado en el puerto ${puerto}`));
   });
+
+  app.use(morganfreeman("dev"));
+  app.use(cors());
+  app.use(express.json());
 
   app.use("/tipos", tiposRutas);
 

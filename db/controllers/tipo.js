@@ -19,9 +19,7 @@ const listarTipos = async () => {
 
 const mostrarTipo = async (idTipo) => {
   try {
-    const tipo = await Tipo.find({
-      _id: idTipo,
-    });
+    const tipo = await Tipo.findById(idTipo);
 
     if (!tipo) {
       const nuevoError = new Error("No se encuentra el tipo que mostrar");
@@ -31,9 +29,46 @@ const mostrarTipo = async (idTipo) => {
 
     return tipo;
   } catch (err) {
-    const nuevoError = new Error("No se ha podido obtener el listado de tipos");
+    const nuevoError = new Error("No se ha podido obtener el tipo");
+    throw err.codigo ? err : nuevoError;
+  }
+};
+const crearTipo = async (tipoACrear) => {
+  try {
+    const tipo = await Tipo.create(tipoACrear);
+
+    return tipo;
+  } catch (err) {
+    const nuevoError = new Error("No se ha podido crear el tipo");
     throw err.codigo ? err : nuevoError;
   }
 };
 
-module.exports = { listarTipos, mostrarTipo };
+const editarTipo = async (id, tipoAModificar) => {
+  try {
+    const tipo = await Tipo.findByIdAndUpdate(id, tipoAModificar);
+
+    return tipo;
+  } catch (err) {
+    const nuevoError = new Error("No se ha podido modificar el tipo");
+    throw err.codigo ? err : nuevoError;
+  }
+};
+const eliminarTipo = async (id) => {
+  try {
+    const tipo = await Tipo.findByIdAndDelete(id);
+
+    return tipo;
+  } catch (err) {
+    const nuevoError = new Error("No se ha podido eliminar el tipo");
+    throw err.codigo ? err : nuevoError;
+  }
+};
+
+module.exports = {
+  listarTipos,
+  mostrarTipo,
+  crearTipo,
+  editarTipo,
+  eliminarTipo,
+};
